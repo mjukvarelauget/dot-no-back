@@ -20,6 +20,6 @@ executable dot-no-back
   main-is:             Main.hs
   -- other-modules:       
   other-extensions:    OverloadedStrings
-  build-depends: base >=4.9 && <4.10, scotty >=0.12 && <0.13, text
+  build-depends: base >=4.9 && <4.10, scotty >=0.12 && <0.13, text, process
   hs-source-dirs:      src
   default-language:    Haskell2010
