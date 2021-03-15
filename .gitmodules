@@ -1,0 +1,3 @@
+[submodule "services/badhaiku"]
+	path = services/badhaiku
+	url = https://github.com/mjukvarelauget/badhaiku.git

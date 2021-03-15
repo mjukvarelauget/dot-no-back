@@ -8,27 +8,22 @@ import Data.Text.Lazy as TL
 import System.IO
 import System.Process (readProcess)
 
+-- "In practice, liftIO is used each time one wants to
+-- run IO actions in another monad, provided such monad allows for it."
 main = do
   putStrLn "Starting server..."
-  haiku <- readHaiku
-  haiku2 <- createHaiku
   scotty 3000 $ do
     get "/haiku" $ do
-      S.text $ mconcat ["aaaaaa", TL.pack haiku2]
+      newHaiku <- S.liftAndCatchIO $ getHaiku
+      S.text $ TL.pack newHaiku
 
     notFound $ do
-      S.text "Spesifiser ønsket tjeneste i URL"
+      S.text "Spesifiser ønsket tjeneste i URL\n"
 
--- Currently does lazy load. Probably want to make
--- eager so the handle can be closed in the function
-readHaiku :: IO String
-readHaiku = do
-  handle <- openFile "haiku.txt" ReadMode
-  contents <- hGetContents handle
-  return contents
 
-createHaiku :: IO String
-createHaiku = do
-  let path = "./echoHaiku.sh"
-  readProcess path [] ""
+--NOTE: The process url is relative to the top level directory with cabal run
+getHaiku :: IO String
+getHaiku = do
+  let runscript = "helpers/runHaiku.sh"
+  readProcess runscript [] "" 
   
