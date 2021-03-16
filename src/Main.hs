@@ -17,6 +17,11 @@ import qualified Data.ByteString.Lazy as BL
 import System.IO
 import System.Process (readProcess)
 
+import qualified Data.Map as Map
+
+data Haiku = Haiku {haiku :: [TL.Text]}
+instance ToJSON Haiku where
+  toJSON (Haiku lines) = object ["haiku" .= lines]
 
 -- "In practice, liftIO is used each time one wants to
 -- run IO actions in another monad, provided such monad allows for it."
@@ -26,7 +31,7 @@ main = do
     get "/haiku" $ do
       newHaiku <- S.liftAndCatchIO $ getHaiku
       S.liftAndCatchIO $ putStr newHaiku
-      S.json $ splitOn "\n" (TL.pack newHaiku)
+      haikuToJSON newHaiku
 
     notFound $ do
       S.text "Spesifiser ønsket tjeneste i URL\n"
@@ -38,4 +43,16 @@ getHaiku = do
   let runscript = "helpers/runHaiku.sh"
   readProcess runscript [] "" 
 
--- The haiku should be served as a JSON list, each element a line
+haikuToJSON :: String -> ActionM ()
+haikuToJSON haikuString = S.json $ haikuRecord
+  where haikuRecord = Haiku {haiku = linesList}
+        linesList = withoutLastElement paddedLinesList
+        paddedLinesList = splitOn "\n" (TL.pack haikuString)
+
+-- Utility
+withoutLastElement :: [a] -> [a]
+withoutLastElement [] = []
+withoutLastElement (head:[]) = []
+withoutLastElement (head:tail) = head:(withoutLastElement tail)
+
+
