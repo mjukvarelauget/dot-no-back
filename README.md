@@ -17,7 +17,7 @@ git submodule update --remote --merge
 ```
 
 ## Bygging
-Kjør `cabal build` for å bygge. Dette lager en kjørbar fil som heter `dot-no-back`. `cabal run` kjører prosjektet.
+Kjør `cabal build` for å bygge. Dette lager en kjørbar fil som heter `dot-no-back`. `cabal run` kjører prosjektet. Relative URL-er i koden og forskjellige hjelpeskript går ut i fra at arbeidsmappa (working directory) er rotmappa, så om man ønsker å kjøre serveren uten å bruke cabal må prosesskallet skje fra rotmappa.
 
 ## Håndtere tjenester
 Tjenester ligger i mappa `services` og importeres som submoduler i git. 
